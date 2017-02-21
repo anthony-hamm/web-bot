@@ -40,6 +40,12 @@ json_var = {
             }
 }
 
+json_test = {
+        "algo1": "def HelloWorld():",
+        "algo2":"  print('hello world print')",
+        "algo3":"  return 'final de he\nllo world'"
+}
+
 @app.route('/')
 def index():
 
@@ -50,6 +56,13 @@ def index():
     resp.headers['Link'] = 'http://ecommerce.com'
 
     return resp
+
+@app.route('/push_json')
+def pushtojson():
+    json_result = json_test
+    with open('sandbox.py', 'w') as outfile:
+        json.dump(json_result, outfile)
+    return "Se agrego el JSON test"
 
 @app.route('/api/ejemplo1', methods=['GET'])
 def ejemplo_1():
@@ -82,7 +95,7 @@ def ejemplo_param():
 
 @app.route('/aprender/HelloWorld')
 def test1():
-    with open('C:/Users/hamme/PycharmProjects/flask_Api/sandbox.py', "a") as myfile:
+    with open('sandbox.py', "a") as myfile:
         myfile.write("def HelloWorld():")
         myfile.write("\n")
         myfile.write('  print("hello world print")')
@@ -93,7 +106,7 @@ def test1():
 
 @app.route('/aprender/HelloPlanet')
 def test2():
-    with open('C:/Users/hamme/PycharmProjects/flask_Api/sandbox.py', "a") as myfile:
+    with open('sandbox.py', "a") as myfile:
         myfile.write("def HelloPlanet():")
         myfile.write("\n")
         myfile.write('  print("hello planet print")')
@@ -113,6 +126,10 @@ def test4():
     import sandbox
     sandbox.HelloPlanet()
     return "Ejecuté la función HelloPlanet desde otro archivo"
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return 'Esta ruta no existe', 404
 
 
 ## Main
