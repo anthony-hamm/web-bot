@@ -4,11 +4,21 @@ from flask import Flask, request, jsonify, json, Response
 
 app = Flask(__name__)
 
-json_test = {
-    "algo1": "def HelloWorld():",
-    "algo2": "  print('hello world print')",
-    "algo3": "  return 'final de hello world'"
+data = {
+    "code":
+        "def HelloWorld():\n  print(\"hello world print\")\n  return \"final de hello world\"\n\n"
 }
+
+@app.route('/hamm', methods=['GET'])
+def getCode():
+    json_result = json.dumps(data)
+    json_output = json.loads(json_result)
+    print(json_output['code'])
+
+    with open('sandbox.py', 'a') as myFile:
+        myFile.write(json_output['code'])
+
+    return "Se agregÓ el JSON test"
 
 
 @app.route('/')
