@@ -3,7 +3,7 @@ import logging
 from logging import getLogger
 
 from flask import Flask
-from flask import Flask, request, jsonify, json, Response
+from flask import Flask, request, jsonify, json, Response, render_template
 
 app = Flask(__name__)
 
@@ -21,8 +21,8 @@ logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
 
 @app.route('/')
-def index():
-    return "index"
+def main():
+    return render_template('index.html')
 
 
 @app.route('/aprender/test', methods=['GET'])
