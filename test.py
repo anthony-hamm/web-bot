@@ -24,6 +24,9 @@ logger.setLevel(logging.DEBUG)
 def main():
     return render_template('index.html')
 
+@app.route('/showSignUp')
+def showSignUp():
+    return render_template('signup.html')
 
 @app.route('/aprender/test', methods=['GET'])
 def getCode():
