@@ -50,10 +50,10 @@ def pushtojson():
         with open('sandbox.py', 'a') as outfile:
             json.dump(json_result, outfile)
     except Exception as e:
-        logger.warning("%s : %s" %(e,'metodo tiene un error'))
+        logger.warning("%s : %s" %(e,'Server error (500) - El metodo tiene un error'))
         return "Server error (500) - El metodo tiene un error", print(e)
     else:
-        logger.info("%s : %s" %(pushtojson, "aprendio de forma exitosa %s"))
+        logger.info("%s : %s" %(pushtojson, "Se aprendió de forma exitosa %s"))
         return 'Se agregó el JSON test', 200
 
 
@@ -71,9 +71,14 @@ def test1():
 
 @app.route('/ejecutar/test')
 def test3():
-    import sandbox
-    sandbox.HelloWorld()
-    return "Ejecuté la función HelloWorld desde otro archivo"
+    try:
+        import sandbox
+        sandbox.HelloWorld()
+    except Exception as e:
+        logger.warning("%s : %s" % (e, 'metodo tiene un error'))
+    else:
+        logger.info("%s : %s" % (pushtojson, "Se ejecutó de forma exitosa %s"))
+        return "Ejecuté la función HelloWorld desde otro archivo"
 
 
 @app.errorhandler(404)
