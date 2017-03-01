@@ -1,11 +1,25 @@
 #!flask/bin/python
 import logging
 from logging import getLogger
-
 from flask import Flask
 from flask import Flask, request, jsonify, json, Response, render_template
+from flask.ext.mysql import MySQL
+# Import helper from wekzeug.security to create hash password
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+mysql = MySQL()
+
+#MySQL configurations
+app.config['MYSQL_DATABASE_USER'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
+app.config['MYSQL_DATABASE_DB'] = 'web-bot'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+mysql.init_app(app)
+
+connection = mysql.connect()
+cursor = connection.cursor()
+
 
 data = {
     "code":
@@ -27,6 +41,30 @@ def main():
 @app.route('/showSignUp')
 def showSignUp():
     return render_template('signup.html')
+
+@app.route('/signUp',methods=['POST'])
+def signUp():
+    # create user code will be here !!
+
+    # read the posted values from the form
+    _name = request.form['inputName']
+    _email = request.form['inputEmail']
+    _password = request.form['inputPassword']
+
+    # validate the received values
+    if _name and _email and _password:
+        return json.dumps({'html':'<span>All fields good!!</span>'})
+    else:
+        return json.dump({'html':'<span>Enter the required fields</span>'})
+
+
+
+
+
+
+
+
+
 
 @app.route('/aprender/test', methods=['GET'])
 def getCode():
@@ -86,7 +124,7 @@ def page_not_found(error):
     logger.info("la ruta no existe")
     return 'Esta ruta no existe', 404
 
-
 ## Main
 if __name__ == '__main__':
     app.run(debug=True, port=8000, host='0.0.0.0')
+
