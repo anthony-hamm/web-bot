@@ -70,35 +70,103 @@ def signUp():
         connection.close()
 
 
-@app.route('/messages', methods=['POST'])
-def api_message():
-    if request.headers['Content-Type'] == 'text/plain':
-        return "Text Message: " + request.data
-
-    elif request.headers['Content-Type'] == 'application/json':
-        return "JSON Message: " + json.dumps(request.json)
-    else:
-        return "415 Unsupported Media Type ;)"
 
 
-@app.route('/test', methods=['POST'])
-def guardarAprender():
+@app.route('/abc', methods=['POST'])
+def abc():
+        json_result = json.dumps(request.json)
+        json_output = json.loads(json_result)
+        print(json_output['code'] + "\n")
+        print(json_output['name'] + "\n")
+        print(json_output['description'] + "\n")
+        print(json_output['callback'] + "\n")
+        return "true"
+
+
+
+
+
+
+
+
+@app.route('/learnAction', methods=['POST'])
+def LearnAction():
     if request.headers['Content-Type'] == 'application/json':
-        try:
-            json_result = json.dumps(request.json)
-            json_output = json.loads(json_result)
-            # print(json_output['code'])
-            with open('sandbox.py', 'w') as myFile:
-                myFile.write(json_output['code'])
+        # convert the json request into a readable format
+        json_result = json.dumps(request.json)
+        json_output = json.loads(json_result)
 
-        except Exception as e:
-            logger.warning("%s : %s" % (e, 'El método tiene un error'))
-        else:
-            logger.info("%s : %s" % (getCode, "Se aprendió de forma exitosa"))
-            return 'Se agregó el JSON test', 200
+        # Add action reference to the DB
+        SaveActionToDB(json_output)
+
+        # Add action code to the memory file (sandbox.py)
+        WriteCodeToSandbox(json_output)
+
+        # Add action log to the DB
+        action = "testAction"
+        SaveLogToDB(action)
+        return "Action added successfully"
     else:
         return "415 Unsupported Media Type"
 
+# Agrega referencias de memoria a la base de datos
+def SaveActionToDB(json_output):
+    try:
+        # read the posted values from the form
+        _action_name = json_output['name']
+        _action_description = json_output['description']
+        _action_callback = json_output['callback']
+
+        # validate the received values
+        if _action_name and _action_description and _action_callback:
+            # create mySQL connection
+            connection = mysql.connect()
+            # create the cursor to query the store procedure
+            cursor = connection.cursor()
+            # call the store procedure on the database to insert the data if it doesn't exist yet
+            cursor.callproc('sp_addAction', (_action_name, _action_description, _action_callback))
+            data = cursor.fetchall()
+            if len(data) is 0:
+                connection.commit()
+            else:
+                return json.dump({'error': str(data[0])})
+        else:
+            return json.dump({'html': '<span>Enter the required fields</span>'})
+    except Exception as e:
+        return json.dump({'error': str(e)})
+    finally:
+        cursor.close()
+        connection.close()
+
+def WriteCodeToSandbox(json_output):
+    try:
+        with open('sandbox.py', 'a') as myFile:
+            myFile.write(json_output['code'])
+    except Exception as e:
+        logger.warning("%s : %s" % (e, 'El método tiene un error'))
+    else:
+        logger.info("%s : %s" % (getCode, "Se aprendió de forma exitosa"))
+        return 'Se agregó el JSON test', 200
+
+def SaveLogToDB(action):
+    try:
+        add_log = ("INSERT INTO tbl_log "
+                   "(log_user, log_action , log_timeStamp) "
+                   "VALUES (%s, %s, %s)")
+        # create mySQL connection
+        connection = mysql.connect()
+        # create the cursor to query the store procedure
+        cursor = connection.cursor()
+        # call the store procedure on the database to insert the data if it doesn't exist yet
+        cursor.execute(add_log, ("testUser", action, "testTimeStamp"))
+        connection.commit()
+    except Exception as e:
+        return json.dump({'error': str(e)})
+    finally:
+        cursor.close()
+        connection.close()
+
+@app.route('/showActions', methods=['POST'])
 
 
 
@@ -156,6 +224,17 @@ def test3():
     else:
         logger.info("%s : %s" % (pushtojson, "Se ejecutó de forma exitosa %s"))
         return "Ejecuté la función HelloWorld desde otro archivo"
+
+
+@app.route('/messages', methods=['POST'])
+def api_message():
+    if request.headers['Content-Type'] == 'text/plain':
+        return "Text Message: " + request.data
+
+    elif request.headers['Content-Type'] == 'application/json':
+        return "JSON Message: " + json.dumps(request.json)
+    else:
+        return "415 Unsupported Media Type ;)"
 
 
 @app.errorhandler(404)
