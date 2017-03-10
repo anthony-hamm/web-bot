@@ -166,11 +166,36 @@ def SaveLogToDB(action):
         cursor.close()
         connection.close()
 
-@app.route('/showActions', methods=['POST'])
+@app.route('/showActions', methods=['GET'])
+def ShowActions():
+    infoArray = GetActionsInfo()
+    return "Actions"
 
-
-
-
+def GetActionsInfo():
+    # sqlActions = "SELECT action_name FROM `web-bot`.tbl_action;"
+    sql = "SELECT * FROM `web-bot`.tbl_action;"
+    try:
+        name, description = [], []
+        infoArray = [name], [description]
+        # create mySQL connection
+        connection = mysql.connect()
+        # create the cursor to query the store procedure
+        cursor = connection.cursor()
+        # executes the sql query to pull the tbl_action table values
+        cursor.execute(sql)
+        rcount = cursor.fetchall()
+        for r in rcount:
+            # row = cursor.fetchone()
+            name.append(r[1])
+            description.append(r[2])
+        print("\n\n" + name[0] + " " + description[0] + "\n" + name[1] + " " + description[1] + "\n" + name[2] + " " +
+              description[2])
+        return infoArray
+    except Exception as e:
+        return json.dump({'error': str(e)})
+    finally:
+        cursor.close()
+        connection.close()
 
 
 @app.route('/aprender/test', methods=['GET'])
