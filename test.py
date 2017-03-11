@@ -2,7 +2,7 @@
 import logging
 from logging import getLogger
 
-import requests
+#import requests
 
 from flask import Flask
 from flask import Flask, request, jsonify, json, Response, render_template
@@ -19,6 +19,16 @@ app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
 app.config['MYSQL_DATABASE_DB'] = 'web-bot'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
+
+
+logging.basicConfig(filename='web_bot.log')
+logger = logging.getLogger()
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
+
 
 data = {
     "code":
@@ -48,13 +58,16 @@ data4 = {
 def Suma(param1, param2):
   return param1+param2
 
-logging.basicConfig(filename='web_bot.log')
-logger = logging.getLogger()
-handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+
+@app.route('/abc', methods=['POST'])
+def abc():
+        json_result = json.dumps(request.json)
+        json_output = json.loads(json_result)
+        print(json_output['code'] + "\n")
+        print(json_output['name'] + "\n")
+        print(json_output['description'] + "\n")
+        print(json_output['callback'] + "\n")
+        return "true"
 
 
 @app.route('/')
@@ -94,25 +107,6 @@ def signUp():
     finally:
         cursor.close()
         connection.close()
-
-
-
-
-@app.route('/abc', methods=['POST'])
-def abc():
-        json_result = json.dumps(request.json)
-        json_output = json.loads(json_result)
-        print(json_output['code'] + "\n")
-        print(json_output['name'] + "\n")
-        print(json_output['description'] + "\n")
-        print(json_output['callback'] + "\n")
-        return "true"
-
-
-
-
-
-
 
 
 @app.route('/learnAction', methods=['POST'])
@@ -192,17 +186,32 @@ def SaveLogToDB(action):
         cursor.close()
         connection.close()
 
+
+
+
+
+
+
+
 @app.route('/showActions', methods=['GET'])
 def ShowActions():
     infoArray = GetActionsInfo()
-    return "Actions"
+    print(infoArray)
+    name = infoArray[0]
+    description = infoArray[1]
+    test1 = len(name)
+    test2 = name[0][2]
+    print(test1)
+    print(name[0][2])
+
+    return json.dump({"Actions":[{"name":"Function Name","description":"This is a description"},{"name":"Function Name","description":"This is a description"}]})
 
 def GetActionsInfo():
     # sqlActions = "SELECT action_name FROM `web-bot`.tbl_action;"
+    # Query all the rows from a database table
     sql = "SELECT * FROM `web-bot`.tbl_action;"
     try:
         name, description = [], []
-        infoArray = [name], [description]
         # create mySQL connection
         connection = mysql.connect()
         # create the cursor to query the store procedure
@@ -216,12 +225,21 @@ def GetActionsInfo():
             description.append(r[2])
         print("\n\n" + name[0] + " " + description[0] + "\n" + name[1] + " " + description[1] + "\n" + name[2] + " " +
               description[2])
+        infoArray = [name, description]
+        print(infoArray)
         return infoArray
     except Exception as e:
         return json.dump({'error': str(e)})
     finally:
         cursor.close()
         connection.close()
+
+
+
+
+
+
+
 
 
 @app.route('/aprender/test', methods=['GET'])
@@ -300,17 +318,6 @@ def implementar():
     json_result = json.dumps(request.json)
     json_output = json.loads(json_result)
     return weather_api(json_output['pais'])
-
-
-@app.route('/abc', methods=['POST'])
-def abc():
-        json_result = json.dumps(request.json)
-        json_output = json.loads(json_result)
-        print(json_output['code'] + "\n")
-        print(json_output['name'] + "\n")
-        print(json_output['description'] + "\n")
-        print(json_output['callback'] + "\n")
-        return "true"
 
 
 @app.errorhandler(404)
