@@ -1,10 +1,6 @@
 #!flask/bin/python
 import logging
-from logging import getLogger
-
 import requests
-
-from flask import Flask
 from flask import Flask, request, jsonify, json, Response, render_template
 from flaskext.mysql import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash           # Import helper from wekzeug.security to create hash password
@@ -107,7 +103,7 @@ def signUp():
         cursor.close()
         connection.close()
 
-
+# Learn new acción (first saves the action to the database, then writes the new action into the memory file and ends by adding a new line to the log file.
 @app.route('/learnAction', methods=['POST'])
 def LearnAction():
     if request.headers['Content-Type'] == 'application/json':
@@ -231,14 +227,26 @@ def GetActionsInfo():
 @app.route('/deleteAllActions', methods=['DELETE'])
 def DeleteAllActions():
     try:
+        add_log = ("truncate tbl_action")
+        # create mySQL connection
+        connection = mysql.connect()
+        # create the cursor to query the store procedure
+        cursor = connection.cursor()
+        # executes sql query to delete all the rows in the Actions table
+        cursor.execute(add_log)
+        # resets the memory file
         with open('sandbox.py', 'w') as myFile:
             myFile.write("")
     except Exception as e:
-        logger.warning("%s : %s" % (e, 'El método tiene un error'))
-        return 'No se pudo eliminar toda la memoria de forma exitosa' + json.dump({'error': str(e)}), 500
+        return json.dump({'error': str(e)}), 500
     else:
-        logger.info("%s : %s" % (getCode, "Se eliminó toda la memoria de forma exitosa"))
-        return 'Se eliminó toda la memoria de forma exitosa', 200
+        connection.commit()
+    finally:
+        cursor.close()
+        connection.close()
+    return 'Se eliminó toda la memoria de forma exitosa', 200
+
+
 
 
 
