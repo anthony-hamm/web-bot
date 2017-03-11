@@ -1,14 +1,9 @@
 #!flask/bin/python
 import logging
-from logging import getLogger
-
-#import requests
-
-from flask import Flask
+import requests
 from flask import Flask, request, jsonify, json, Response, render_template
 from flaskext.mysql import MySQL
-# Import helper from wekzeug.security to create hash password
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash           # Import helper from wekzeug.security to create hash password
 
 app = Flask(__name__)
 mysql = MySQL()
@@ -171,14 +166,14 @@ def WriteCodeToSandbox(json_output):
 def SaveLogToDB(action):
     try:
         add_log = ("INSERT INTO tbl_log "
-                   "(log_user, log_action , log_timeStamp) "
-                   "VALUES (%s, %s, %s)")
+                   "(log_user, log_action) "
+                   "VALUES (%s, %s)")
         # create mySQL connection
         connection = mysql.connect()
         # create the cursor to query the store procedure
         cursor = connection.cursor()
         # call the store procedure on the database to insert the data if it doesn't exist yet
-        cursor.execute(add_log, ("testUser", action, "testTimeStamp"))
+        cursor.execute(add_log, ("testUser", action))
         connection.commit()
     except Exception as e:
         return json.dump({'error': str(e)})
@@ -187,24 +182,20 @@ def SaveLogToDB(action):
         connection.close()
 
 
-
-
-
-
-
-
 @app.route('/showActions', methods=['GET'])
 def ShowActions():
     infoArray = GetActionsInfo()
-    print(infoArray)
     name = infoArray[0]
     description = infoArray[1]
-    test1 = len(name)
-    test2 = name[0][2]
-    print(test1)
-    print(name[0][2])
-
-    return json.dump({"Actions":[{"name":"Function Name","description":"This is a description"},{"name":"Function Name","description":"This is a description"}]})
+    json_content = {}
+    for i in range(0, len(name)):
+        temp = {name[i]:description[i]}
+        if json_content == {}:
+            json_content = dict(temp)
+        else:
+            json_content.update(temp)
+    res = json.dumps({"Actions": [json_content]})
+    return res
 
 def GetActionsInfo():
     # sqlActions = "SELECT action_name FROM `web-bot`.tbl_action;"
@@ -223,10 +214,7 @@ def GetActionsInfo():
             # row = cursor.fetchone()
             name.append(r[1])
             description.append(r[2])
-        print("\n\n" + name[0] + " " + description[0] + "\n" + name[1] + " " + description[1] + "\n" + name[2] + " " +
-              description[2])
         infoArray = [name, description]
-        print(infoArray)
         return infoArray
     except Exception as e:
         return json.dump({'error': str(e)})
@@ -235,8 +223,17 @@ def GetActionsInfo():
         connection.close()
 
 
-
-
+@app.route('/deleteAllActions', methods=['GET'])
+def DeleteAllActions():
+    try:
+        with open('sandbox.py', 'w') as myFile:
+            myFile.write("")
+    except Exception as e:
+        logger.warning("%s : %s" % (e, 'El método tiene un error'))
+        return 'No se pudo eliminar toda la memoria de forma exitosa', 500
+    else:
+        logger.info("%s : %s" % (getCode, "Se eliminó toda la memoria de forma exitosa"))
+        return 'Se eliminó toda la memoria de forma exitosa', 200
 
 
 
