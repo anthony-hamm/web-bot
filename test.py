@@ -50,19 +50,7 @@ data4 = {
         "def Divicion(param1, param2):\n  return param1/param2\n\n"
 }
 
-def Suma(param1, param2):
-  return param1+param2
-
-
-@app.route('/abc', methods=['POST'])
-def abc():
-        json_result = json.dumps(request.json)
-        json_output = json.loads(json_result)
-        print(json_output['code'] + "\n")
-        print(json_output['name'] + "\n")
-        print(json_output['description'] + "\n")
-        print(json_output['callback'] + "\n")
-        return "true"
+##########################################################################################################
 
 
 @app.route('/')
@@ -70,7 +58,7 @@ def main():
     return render_template('index.html')
 
 
-@app.route('/showSignUp')
+@app.route('/showSignUp', methods=['GET'])
 def showSignUp():
     return render_template('signup.html')
 
@@ -247,9 +235,6 @@ def DeleteAllActions():
     return 'Se eliminó toda la memoria de forma exitosa', 200
 
 
-
-
-#######
 @app.route('/showLogs', methods=['GET'])
 def ShowLogs():
     logArray = GetLogInfo()
@@ -269,7 +254,6 @@ def ShowLogs():
     return res
 
 def GetLogInfo():
-    # sqlActions = "SELECT action_name FROM `web-bot`.tbl_action;"
     # Query all the rows from a database table
     sql = "SELECT * FROM `web-bot`.tbl_log;"
     try:
@@ -293,6 +277,14 @@ def GetLogInfo():
     finally:
         cursor.close()
         connection.close()
+
+
+
+##########################################################################################################
+
+
+
+
 
 
 @app.route('/aprender/test', methods=['GET'])
@@ -348,6 +340,22 @@ def test3():
     else:
         logger.info("%s : %s" % (pushtojson, "Se ejecutó de forma exitosa"))
         return "Ejecuté la función HelloWorld desde otro archivo"
+
+
+
+def Suma(param1, param2):
+  return param1+param2
+
+
+@app.route('/abc', methods=['POST'])
+def abc():
+        json_result = json.dumps(request.json)
+        json_output = json.loads(json_result)
+        print(json_output['code'] + "\n")
+        print(json_output['name'] + "\n")
+        print(json_output['description'] + "\n")
+        print(json_output['callback'] + "\n")
+        return "true"
 
 
 @app.route('/messages', methods=['POST'])
