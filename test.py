@@ -223,17 +223,17 @@ def GetActionsInfo():
         connection.close()
 
 
-@app.route('/deleteAllActions', methods=['GET'])
-def DeleteAllActions():
-    try:
-        with open('sandbox.py', 'w') as myFile:
-            myFile.write("")
-    except Exception as e:
-        logger.warning("%s : %s" % (e, 'El método tiene un error'))
-        return 'No se pudo eliminar toda la memoria de forma exitosa', 500
-    else:
-        logger.info("%s : %s" % (getCode, "Se eliminó toda la memoria de forma exitosa"))
-        return 'Se eliminó toda la memoria de forma exitosa', 200
+# @app.route('/deleteAllActions', methods=['GET'])
+# def DeleteAllActions():
+#     try:
+#         with open('sandbox', 'w') as myFile:
+#             myFile.write("")
+#     except Exception as e:
+#         logger.warning("%s : %s" % (e, 'El método tiene un error'))
+#         return 'No se pudo eliminar toda la memoria de forma exitosa' + json.dump({'error': str(e)}), 500
+#     else:
+#         logger.info("%s : %s" % (getCode, "Se eliminó toda la memoria de forma exitosa"))
+#         return 'Se eliminó toda la memoria de forma exitosa', 200
 
 
 
