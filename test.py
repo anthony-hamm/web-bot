@@ -249,7 +249,50 @@ def DeleteAllActions():
 
 
 
+#######
+@app.route('/showLogs', methods=['GET'])
+def ShowLogs():
+    logArray = GetLogInfo()
+    id = logArray[0]
+    user = logArray[1]
+    action = logArray[2]
+    timestamp = logArray[3]
 
+    json_content = {}
+    for i in range(0, len(user)):
+        temp = {"Log" + str(id[i]): str(user[i]) + str(action[i]) + str(timestamp[i])}
+        if json_content == {}:
+            json_content = dict(temp)
+        else:
+            json_content.update(temp)
+        res = json.dumps({"Log Information": [json_content]})
+    return res
+
+def GetLogInfo():
+    # sqlActions = "SELECT action_name FROM `web-bot`.tbl_action;"
+    # Query all the rows from a database table
+    sql = "SELECT * FROM `web-bot`.tbl_log;"
+    try:
+        id, user, action, timestamp = [], [], [], []
+        # create mySQL connection
+        connection = mysql.connect()
+        # create the cursor to query the store procedure
+        cursor = connection.cursor()
+        # executes the sql query to pull the tbl_action table values
+        cursor.execute(sql)
+        rowCount = cursor.fetchall()
+        for r in rowCount:
+            id.append(r[0])
+            user.append(r[1])
+            action.append(r[2])
+            timestamp.append(str(r[3]))
+        logArray = [id, user, action, timestamp]
+        return logArray
+    except Exception as e:
+        return json.dump({'error': str(e)})
+    finally:
+        cursor.close()
+        connection.close()
 
 
 @app.route('/aprender/test', methods=['GET'])
