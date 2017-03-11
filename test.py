@@ -1,6 +1,10 @@
 #!flask/bin/python
 import logging
+from logging import getLogger
+
 import requests
+
+from flask import Flask
 from flask import Flask, request, jsonify, json, Response, render_template
 from flaskext.mysql import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash           # Import helper from wekzeug.security to create hash password
@@ -118,7 +122,7 @@ def LearnAction():
         WriteCodeToSandbox(json_output)
 
         # Add action log to the DB
-        action = "testAction"
+        action = "Learned Action: " + json_output['name'] + " via HTTP POST /learnAction "
         SaveLogToDB(action)
         return "Action added successfully"
     else:
@@ -173,7 +177,8 @@ def SaveLogToDB(action):
         # create the cursor to query the store procedure
         cursor = connection.cursor()
         # call the store procedure on the database to insert the data if it doesn't exist yet
-        cursor.execute(add_log, ("testUser", action))
+        current_user = "Current User ( " + request.remote_addr + " )"
+        cursor.execute(add_log, (current_user, action))
         connection.commit()
     except Exception as e:
         return json.dump({'error': str(e)})
