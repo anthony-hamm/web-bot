@@ -48,7 +48,7 @@ Via Postman or any other REST client the user can consult the users created at t
 
 ###Example:
 
-![alt=showusers][/images/showusers.png]
+![ShowUsers](https://cloud.githubusercontent.com/assets/8117872/23837385/ec388c58-074c-11e7-8c0c-5a001294d1ce.png)
 
 
 
