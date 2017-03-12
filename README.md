@@ -48,7 +48,7 @@ Via Postman or any other REST client the user can consult the users created at t
 
 ###Example:
 
-[images:showusers.png]
+[[https://github.com/anthony-hamm/web-bot/images/showusers.png|alt=showusers]]
 
 
 
