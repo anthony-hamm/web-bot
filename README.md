@@ -9,7 +9,7 @@ Welcome to the HammCam Web-Bot, this would a really fun experience since this **
 
 
 ## Map of the Routes in the applicacion
-- / - **Main** - Default route of the application
+- /**Main** - Default route of the application
 - /**showSignUp** - Route that renders the **showSignUp** UI
 - /**showUsers** - Router where the user can consult all the users registered users in the DataBase
 - /**learnAction** - Route where the user sends the Python Code
