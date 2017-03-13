@@ -371,7 +371,7 @@ def DeleteAllActions():
     finally:
         cursor.close()
         connection.close()
-    return 'Se eliminó toda la memoria de forma exitosa', 200
+    return 'All the memory was deleted', 200
 
 
 ################-------------------------------- Deleting the information on the Actions table -----------------------------#################
@@ -394,7 +394,7 @@ def getCode():
         logger.warning("%s : %s" % (e, 'El método tiene un error'))
     else:
         logger.info("%s : %s" % (getCode, "Se aprendió de forma exitosa"))
-        return 'Se agregó el JSON test', 200
+        return 'Math operations learned', 200
 
 # Decorator showResults | Show the results of the 4 basics math operations
 @app.route('/showResults', methods=['GET','POST'])
