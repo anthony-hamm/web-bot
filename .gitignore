@@ -1,7 +1,13 @@
 .idea/
 *__pycache__/*
-*.log
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
+*.log
+
+# Elastic Beanstalk Files
+
+.elasticbeanstalk/*
+*.elasticbeanstalk/*
+
+!.elasticbeanstalk/*.cfg.yml
+
+!.elasticbeanstalk/*.global.yml
+
