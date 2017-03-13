@@ -5,7 +5,6 @@
 # Elastic Beanstalk Files
 
 .elasticbeanstalk/*
-*.elasticbeanstalk/*
 
 !.elasticbeanstalk/*.cfg.yml
 
