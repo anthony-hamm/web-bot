@@ -208,8 +208,8 @@ Our implementation requires the name to be send as a paramter in a JSON and then
 ![weather](https://cloud.githubusercontent.com/assets/8117872/23838457/86be5e2a-075b-11e7-9739-b3a7110d65b0.png)
 
 ##Developers:
-*[Anthony Hamm](https://github.com/anthony-hamm)
-*[Camilo Martinez](https://github.com/marticam)
+* [Anthony Hamm](https://github.com/anthony-hamm)
+* [Camilo Martinez](https://github.com/marticam)
 
 
 
